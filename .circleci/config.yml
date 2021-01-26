@@ -5,18 +5,32 @@ executors:
   docker-executor:
     docker:
       - image: cimg/base:2020.01
-      - image: amazon/aws-cli:2.1.21
-      - image: hashicorp/terraform:0.14.5
 
 commands:
   load-dependecies:
     steps:
+      - run:
+          name: Install aws-cli
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
       - run:
           name: Set up aws cred
           command: |
             aws configure set aws_access_key_id "${CI_INFRA_BOT_AWS_ACCESS_KEY}"
             aws configure set aws_secret_access_key "${CI_INFRA_BOT_AWS_SECRET_KEY}"
             aws configure set default.region "eu-west-1"
+      - run:
+          name: Install Terraform
+          command: |
+            git clone https://github.com/tfutils/tfenv.git ~/.tfenv
+            echo 'export PATH="$HOME/.tfenv/bin:$PATH"' >> ~/.bash_profile
+            mkdir -p ~/.local/bin/
+            . ~/.profile
+            ln -s ~/.tfenv/bin/* ~/.local/bin
+            tfenv install
+            tfenv use
       - attach_workspace:
           at: .
 
