@@ -84,6 +84,7 @@ jobs:
       - run:
           name: deploy
           command: |
+            terraform init
             terraform apply -input=false tfplan
 
 # Orchestrate our job run sequence
