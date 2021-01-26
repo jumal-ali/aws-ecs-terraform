@@ -51,8 +51,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - ecs-container-definitions
-            - .terraform
+            - ./ecs-container-definitions
   build-plan:
     executor: docker-executor
     steps:
@@ -64,6 +63,7 @@ jobs:
       - run:
           name: prepare deploy
           command: |
+            terraform init
             terraform plan \
               -input=false \
               -out=tfplan \
