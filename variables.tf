@@ -1,3 +1,8 @@
+variable "project-name" {
+  type        = string
+  description = "Project Name"
+}
+
 variable "env" {
   type        = string
   description = "The environment in which to deploy the resources to. e.g. dev"

@@ -2,7 +2,7 @@ locals {
   common_tags = {
     Terraform   = "true"
     Environment = var.env
-    Project     = "ECS Beta"
+    Project     = var.project-name
   }
 
   container = {
