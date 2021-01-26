@@ -31,8 +31,6 @@ commands:
             ln -s ~/.tfenv/bin/* ~/.local/bin
             tfenv install
             tfenv use
-      - attach_workspace:
-          at: .
 
 # Define the jobs we want to run for this project
 jobs:
@@ -41,6 +39,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
+      - load-dependecies
       - run:
           name: Pull Web Task Template
           command: git clone --depth 1 git@github.com:jumal-ali/ecs-container-definitions.git ecs-container-definitions
@@ -58,6 +57,8 @@ jobs:
     steps:
       - setup_remote_docker
       - load-dependecies
+      - attach_workspace:
+          at: .
       - run:
           name: prepare deploy
           command: |
@@ -75,6 +76,8 @@ jobs:
     steps:
       - setup_remote_docker
       - load-dependecies
+      - attach_workspace:
+          at: .
       - run:
           name: deploy
           command: |
