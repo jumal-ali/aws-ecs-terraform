@@ -1,0 +1,91 @@
+version: 2.1
+
+# Setting up dependencies for use by the jobs in this project
+executors:
+  docker-executor:
+    docker:
+      - image: cimg/base:2020.01
+      - image: amazon/aws-cli:2.1.21
+      - image: hashicorp/terraform:0.14.5
+
+commands:
+  load-dependecies:
+    steps:
+      - run:
+          name: Set up aws cred
+          command: |
+            aws configure set aws_access_key_id "${CI_INFRA_BOT_AWS_ACCESS_KEY}"
+            aws configure set aws_secret_access_key "${CI_INFRA_BOT_AWS_SECRET_KEY}"
+            aws configure set default.region "eu-west-1"
+      - attach_workspace:
+          at: .
+
+# Define the jobs we want to run for this project
+jobs:
+  build-dependencies:
+    executor: docker-executor
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Pull Web Task Template
+          command: git clone --depth 1 git@github.com:jumal-ali/ecs-container-definitions.git ecs-container-definitions
+      - run:
+          name: Inititialise and Validate
+          command: |
+            terraform init
+            terraform validate
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./ecs-container-definitions
+  build-plan:
+    executor: docker-executor
+    steps:
+      - setup_remote_docker
+      - load-dependecies
+      - run:
+          name: prepare deploy
+          command: |
+            terraform plan \
+              -input=false \
+              -out=tfplan \
+              -no-color \
+              -var-file environments/dev.tfvars
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./tfplan
+  deploy-plan:
+    executor: docker-executor
+    steps:
+      - setup_remote_docker
+      - load-dependecies
+      - run:
+          name: deploy
+          command: |
+            terraform apply -input=false tfplan
+
+# Orchestrate our job run sequence
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build-dependencies
+      - build-plan:
+          requires: 
+            - build-dependencies
+          filters:
+            branches:
+              only: master
+            tags:
+              only: /^v[0-9]+(\.[0-9]+)*$/
+      - deploy-plan:
+          type: approval
+          requires: 
+            - build-plan
+          filters:
+            branches:
+              only: master
+            tags:
+              only: /^v[0-9]+(\.[0-9]+)*$/
