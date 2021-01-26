@@ -100,10 +100,13 @@ workflows:
               only: master
             tags:
               only: /^v[0-9]+(\.[0-9]+)*$/
-      - deploy-plan:
+      - hold-for-approval:
           type: approval
-          requires: 
+          requires:
             - build-plan
+      - deploy-plan:
+          requires: 
+            - hold-for-approval
           filters:
             branches:
               only: master
