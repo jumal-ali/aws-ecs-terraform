@@ -55,6 +55,7 @@ jobs:
   build-plan:
     executor: docker-executor
     steps:
+      - checkout
       - setup_remote_docker
       - load-dependecies
       - attach_workspace:
