@@ -44,4 +44,20 @@ variable "containers" {
     app-name             = string
     healthcheck-commands = list(string)
   }))
+
+  description = <<-DESCRIPTION
+                    Please provide a List of Container Objects with the following format:
+                    [
+                      {
+                        image                = "jumal/superawesome-web-app"
+                        tag                  = "latest"
+                        container-port       = 3000
+                        host-port            = 80
+                        cpu                  = 256
+                        memory               = 512
+                        app-name             = "web-app"
+                        healthcheck-commands = ["CMD-SHELL", "curl -f http://localhost:3000/ || exit 1"]
+                      }
+                    ]
+DESCRIPTION
 }
