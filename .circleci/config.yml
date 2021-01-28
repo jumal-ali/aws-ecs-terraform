@@ -40,7 +40,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - load-dependecies
-    - run:
+      - run:
           name: Inititialise and Validate
           command: |
             terraform init
