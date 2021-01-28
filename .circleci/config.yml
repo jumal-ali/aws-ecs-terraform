@@ -56,19 +56,19 @@ jobs:
       - run:
           name: prepare deploy
           command: |
-            mkdir output/
+            mkdir /tmp/output/
             terraform init
             terraform plan \
               -input=false \
-              -out=output/tfplan \
+              -out=/tmp/output/tfplan \
               -no-color \
               --var-file environments/dev.tfvars
       - persist_to_workspace:
           root: .
           paths:
-            - output/tfplan
+            - /tmp/output/tfplan
       - store_artifacts:
-          path: output/tfplan
+          path: /tmp/output/tfplan
           destination: review-plan
   deploy-plan:
     executor: docker-executor
@@ -82,7 +82,7 @@ jobs:
           name: deploy
           command: |
             terraform init
-            terraform apply -input=false output/tfplan
+            terraform apply -input=false tfplan
 
 # Orchestrate our job run sequence
 workflows:
