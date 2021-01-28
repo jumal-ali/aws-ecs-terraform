@@ -63,13 +63,13 @@ jobs:
               -out=/tmp/output/tfplan \
               -no-color \
               --var-file environments/dev.tfvars
+      - store_artifacts:
+          path: /tmp/output/
+          destination: review-plan
       - persist_to_workspace:
           root: /tmp/output/
           paths:
             - tfplan
-      - store_artifacts:
-          path: /tmp/output/tfplan
-          destination: review-plan
   deploy-plan:
     executor: docker-executor
     steps:
