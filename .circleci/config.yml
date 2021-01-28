@@ -40,10 +40,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - load-dependecies
-      - run:
-          name: Pull Web Task Template
-          command: git clone --depth 1 git@github.com:jumal-ali/ecs-container-definitions.git ecs-container-definitions
-      - run:
+    - run:
           name: Inititialise and Validate
           command: |
             terraform init
