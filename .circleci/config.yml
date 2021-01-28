@@ -73,6 +73,9 @@ jobs:
           root: .
           paths:
             - ./tfplan
+      - store_artifacts:
+              path: ./tfplan
+              destination: review-plan
   deploy-plan:
     executor: docker-executor
     steps:

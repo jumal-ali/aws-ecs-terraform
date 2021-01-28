@@ -2,8 +2,13 @@ output "app-load-balancer" {
   value = aws_alb.ecs-alb.dns_name
 }
 
-output "ecs-task-exec-role" {
-  value = [for role in aws_iam_role.ecs-task-exec-role : role.name]
+output "task-update-info" {
+  value = [for k, v in var.containers : {
+      Task : aws_ecs_task_definition.ecs-task[v.app-name].family,
+      Role : aws_iam_role.ecs-task-exec-role[v.app-name].name 
+      Service : aws_ecs_service.ecs-service[v.app-name].name,
+      Cluster : aws_ecs_cluster.ecs.name
+      }]
 }
 
 output "ci-deployer-bot-name" {

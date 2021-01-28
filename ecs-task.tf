@@ -20,7 +20,9 @@ resource "aws_ecs_task_definition" "ecs-task" {
   cpu                      = each.value.cpu
   execution_role_arn       = aws_iam_role.ecs-task-exec-role[each.value.app-name].arn
 
-  tags = local.common_tags
+  tags = merge(local.common_tags, {
+    app-name   = "${lower(var.env)}-${each.value.app-name}"
+  })
 }
 
 resource "aws_iam_role" "ecs-task-exec-role" {
@@ -44,7 +46,9 @@ resource "aws_iam_role" "ecs-task-exec-role" {
   }
   EOF
 
-  tags = local.common_tags
+  tags = merge(local.common_tags, {
+    app-name   = "${lower(var.env)}-${each.value.app-name}"
+  })
 }
 
 resource "aws_iam_role_policy" "ecs-task-exec-policy" {
@@ -82,5 +86,7 @@ resource "aws_security_group" "ecs-task-app-sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = local.common_tags
+  tags = merge(local.common_tags, {
+    app-name   = "${lower(var.env)}-${each.value.app-name}"
+  })
 }
