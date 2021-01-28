@@ -64,9 +64,9 @@ jobs:
               -no-color \
               --var-file environments/dev.tfvars
       - persist_to_workspace:
-          root: .
+          root: /tmp/output/
           paths:
-            - /tmp/output/tfplan
+            - tfplan
       - store_artifacts:
           path: /tmp/output/tfplan
           destination: review-plan
