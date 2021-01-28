@@ -4,7 +4,7 @@
         {
             "Effect": "Allow",
             "Action": "ecs:UpdateService",
-            "Resource": "${ecs-service-arn}"
+            "Resource": ${ecs-service-arn}
         },
         {
             "Effect": "Allow",
@@ -12,7 +12,7 @@
                 "iam:PassRole",
                 "iam:GetRole"
             ],
-            "Resource": "${task-exec-role-arn}"
+            "Resource": ${task-exec-role-arn}
         },
         {
             "Effect": "Allow",

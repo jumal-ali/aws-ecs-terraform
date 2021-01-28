@@ -1,3 +1,8 @@
+variable "aws-region" {
+  type        = string
+  description = "aws region .e.g eu-west-1"
+}
+
 variable "project-name" {
   type        = string
   description = "Project Name"
@@ -28,27 +33,15 @@ variable "public_subnets" {
   description = "List of Public Subnets e.g. [\"10.0.101.0/24\", \"10.0.102.0/24\", \"10.0.103.0/24\"]"
 }
 
-variable "container-image" {
-  type        = string
-  description = "Container Image e.g. dhimmat/node-web-app"
-}
-
-variable "container-tag" {
-  type        = string
-  description = "Container Tag e.g. latest"
-}
-
-variable "container-port" {
-  type        = number
-  description = "Container Port e.g. 8080"
-}
-
-variable "container-mem" {
-  type        = number
-  description = "Container Memory e.g. 512"
-}
-
-variable "container-cpu" {
-  type        = number
-  description = "Container CPU e.g. 256"
+variable "containers" {
+  type = list(object({
+    image                = string
+    tag                  = string
+    container-port       = number
+    host-port            = number
+    cpu                  = number
+    memory               = number
+    app-name             = string
+    healthcheck-commands = list(string)
+  }))
 }

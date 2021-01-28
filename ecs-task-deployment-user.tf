@@ -1,19 +1,20 @@
 resource "aws_iam_user" "deployer" {
-  name = "${var.env}-web-app-ci-bot"
+  name = "${lower(var.env)}-ci-bot"
   path = "/deployer/"
 
   tags = local.common_tags
 }
 
 resource "aws_iam_policy" "deployment-policy" {
-  name_prefix = "${var.env}-web-app"
   path        = "/deployment/"
-  description = "Deployment Policy For ${var.env}-web-app"
+  description = "Deployment Policy For ${lower(var.env)} ci-bot"
 
   policy = templatefile("${path.module}/templates/iam-deploy-policy.tpl", {
-    ecs-service-arn    = aws_ecs_service.ecs-service.id
-    task-exec-role-arn = aws_iam_role.ecs-task-exec-role.arn
+    ecs-service-arn    = jsonencode([for k, v in aws_ecs_service.ecs-service : v.id])
+    task-exec-role-arn = jsonencode([for k, v in aws_iam_role.ecs-task-exec-role : v.arn])
   })
+
+  depends_on = [aws_ecs_service.ecs-service, aws_iam_role.ecs-task-exec-role]
 }
 
 resource "aws_iam_user_policy_attachment" "attach-deployment-policy" {

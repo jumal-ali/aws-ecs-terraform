@@ -1,26 +1,32 @@
-resource "aws_ecs_task_definition" "web-app" {
-  family = "${var.env}-web-app"
-  container_definitions = templatefile("${path.module}/ecs-container-definitions/web-app.tpl", {
-    image = local.container.image
-    tag   = local.container.tag
-    port  = local.container.port
-    cpu   = local.container.cpu
-    mem   = local.container.mem
+resource "aws_ecs_task_definition" "ecs-task" {
+  for_each = { for c in var.containers : c.app-name => c }
+
+  family = "${lower(var.env)}-${each.value.app-name}"
+  container_definitions = templatefile("${path.module}/templates/ecs-container-definition.tpl", {
+    image                = each.value.image
+    tag                  = each.value.tag
+    container-port       = each.value.container-port
+    cpu                  = each.value.cpu
+    memory               = each.value.memory
+    app-name             = each.value.app-name
+    awslogs-region       = data.aws_region.current.name
+    awslogs-group        = "/ecs/${local.project-name-hyphated}/${each.value.app-name}"
+    healthcheck-commands = jsonencode(each.value.healthcheck-commands)
   })
 
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  memory                   = local.container.mem
-  cpu                      = local.container.cpu
-  execution_role_arn       = aws_iam_role.ecs-task-exec-role.arn
+  memory                   = each.value.memory
+  cpu                      = each.value.cpu
+  execution_role_arn       = aws_iam_role.ecs-task-exec-role[each.value.app-name].arn
 
-  tags = merge(local.common_tags, local.container, {
-    service = "${var.env}-web-app"
-  })
+  tags = local.common_tags
 }
 
 resource "aws_iam_role" "ecs-task-exec-role" {
-  name_prefix = "${var.env}-ecs-task-execution"
+  for_each = { for c in var.containers : c.app-name => c }
+
+  name_prefix = "${lower(var.env)}-${each.value.app-name}-task-execution"
   path        = "/ecs-task/"
 
   assume_role_policy = <<-EOF
@@ -42,26 +48,39 @@ resource "aws_iam_role" "ecs-task-exec-role" {
 }
 
 resource "aws_iam_role_policy" "ecs-task-exec-policy" {
-  name_prefix = "${var.env}-web-app"
-  role        = aws_iam_role.ecs-task-exec-role.id
+  for_each = { for c in var.containers : c.app-name => c }
 
-  policy = <<-EOF
-  {
-    "Version": "2012-10-17",
-    "Statement": [
-      {
-        "Effect": "Allow",
-        "Action": [
-          "ecr:GetAuthorizationToken",
-          "ecr:BatchCheckLayerAvailability",
-          "ecr:GetDownloadUrlForLayer",
-          "ecr:BatchGetImage",
-          "logs:CreateLogStream",
-          "logs:PutLogEvents"
-        ],
-        "Resource": "*"
-      }
-    ]
+  name_prefix = "${lower(var.env)}-${each.value.app-name}"
+  role        = aws_iam_role.ecs-task-exec-role[each.value.app-name].id
+
+  policy = templatefile("${path.module}/templates/policy-exec-task.tpl", {
+    aws-account-id = data.aws_caller_identity.current.account_id
+    aws-region     = data.aws_region.current.name
+    log-group      = "/ecs/${local.project-name-hyphated}/${each.value.app-name}"
+  })
+}
+
+resource "aws_security_group" "ecs-task-app-sg" {
+  for_each = { for c in var.containers : c.app-name => c }
+
+  name_prefix = "${lower(var.env)}-${each.value.app-name}-task-sg"
+  description = "${var.env} ${each.value.app-name} ecs task"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    description     = "HTTP"
+    from_port       = each.value.container-port
+    to_port         = each.value.container-port
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb-sg.id]
   }
-  EOF
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = local.common_tags
 }

@@ -3,7 +3,7 @@ output "app-load-balancer" {
 }
 
 output "ecs-task-exec-role" {
-  value = aws_iam_role.ecs-task-exec-role.name
+  value = [for role in aws_iam_role.ecs-task-exec-role : role.name]
 }
 
 output "ci-deployer-bot-name" {

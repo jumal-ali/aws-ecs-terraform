@@ -1,5 +1,5 @@
 resource "aws_ecs_cluster" "ecs" {
-  name               = "${var.env}-super-awesome"
+  name               = "${lower(var.env)}-${local.project-name-hyphated}"
   capacity_providers = ["FARGATE"]
 
   tags = local.common_tags
