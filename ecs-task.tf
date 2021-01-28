@@ -21,7 +21,7 @@ resource "aws_ecs_task_definition" "ecs-task" {
   execution_role_arn       = aws_iam_role.ecs-task-exec-role[each.value.app-name].arn
 
   tags = merge(local.common_tags, {
-    app-name   = "${lower(var.env)}-${each.value.app-name}"
+    app-name = "${lower(var.env)}-${each.value.app-name}"
   })
 }
 
@@ -47,7 +47,7 @@ resource "aws_iam_role" "ecs-task-exec-role" {
   EOF
 
   tags = merge(local.common_tags, {
-    app-name   = "${lower(var.env)}-${each.value.app-name}"
+    app-name = "${lower(var.env)}-${each.value.app-name}"
   })
 }
 
@@ -87,6 +87,6 @@ resource "aws_security_group" "ecs-task-app-sg" {
   }
 
   tags = merge(local.common_tags, {
-    app-name   = "${lower(var.env)}-${each.value.app-name}"
+    app-name = "${lower(var.env)}-${each.value.app-name}"
   })
 }
