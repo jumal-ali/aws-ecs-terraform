@@ -18,9 +18,9 @@ commands:
       - run:
           name: Set up aws cred
           command: |
-            aws configure set aws_access_key_id "${CI_INFRA_BOT_AWS_ACCESS_KEY}"
-            aws configure set aws_secret_access_key "${CI_INFRA_BOT_AWS_SECRET_KEY}"
-            aws configure set default.region "eu-west-1"
+            aws configure set aws_access_key_id "$CI_INFRA_BOT_AWS_ACCESS_KEY"
+            aws configure set aws_secret_access_key "$CI_INFRA_BOT_AWS_SECRET_KEY"
+            aws configure set default.region "$AWS_REGION"
       - run:
           name: Install Terraform
           command: |
@@ -56,18 +56,19 @@ jobs:
       - run:
           name: prepare deploy
           command: |
-            mkdir /tmp/output/
             terraform init
             terraform plan \
               -input=false \
-              -out=/tmp/output/tfplan \
+              -out=tfplan \
               -no-color \
               --var-file environments/dev.tfvars
+            mkdir -p /tmp/artifacts/
+            cp tfplan /tmp/artifacts/tfplan
       - store_artifacts:
-          path: /tmp/output/
+          path: /tmp/artifacts/tfplan
           destination: review-plan
       - persist_to_workspace:
-          root: /tmp/output/
+          root: .
           paths:
             - tfplan
   deploy-plan:
