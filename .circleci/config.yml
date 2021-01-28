@@ -45,10 +45,6 @@ jobs:
           command: |
             terraform init
             terraform validate
-      - persist_to_workspace:
-          root: .
-          paths:
-            - ./ecs-container-definitions
   build-plan:
     executor: docker-executor
     steps:
@@ -71,8 +67,8 @@ jobs:
           paths:
             - ./tfplan
       - store_artifacts:
-              path: ./tfplan
-              destination: review-plan
+          path: ./tfplan
+          destination: review-plan
   deploy-plan:
     executor: docker-executor
     steps:
