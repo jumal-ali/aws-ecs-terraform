@@ -76,7 +76,15 @@ resource "aws_security_group" "ecs-task-app-sg" {
     from_port       = each.value.container-port
     to_port         = each.value.container-port
     protocol        = "tcp"
-    security_groups = [aws_security_group.alb-sg.id, aws_security_group.bastion-sg.id]
+    security_groups = [aws_security_group.alb-sg.id]
+  }
+
+  ingress {
+    description     = "HTTP"
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    security_groups = [aws_security_group.bastion-sg.id]
   }
 
   egress {
