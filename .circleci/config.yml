@@ -56,13 +56,13 @@ jobs:
       - run:
           name: prepare deploy
           command: |
+            cat environments/dev.tfvars > terraform.tfvars
+            echo "$DEVOPS_PUBLIC_SSH_KEY" >> terraform.tfvars
             terraform init
             terraform plan \
               -input=false \
               -out=tfplan \
               -no-color \
-              -var-file environments/dev.tfvars
-              -var "ssh-public-key=${DEVOPS_PUBLIC_SSH_KEY}"
             mkdir -p /tmp/artifacts/
             cp tfplan /tmp/artifacts/tfplan
       - store_artifacts:
