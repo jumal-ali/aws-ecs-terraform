@@ -63,10 +63,6 @@ jobs:
               -input=false \
               -out=tfplan \
               -no-color
-            mkdir -p /tmp/artifacts/
-            cp tfplan /tmp/artifacts/tfplan
-      - store_artifacts:
-          path: /tmp/artifacts/
       - persist_to_workspace:
           root: .
           paths:
