@@ -9,7 +9,7 @@ Build an ECS Cluster with a set of running ECS Services
 
 ## Prerequisite
 
-- terraform-cli
+- terraform
 - aws-cli
 - Access to AWS S3 Bucket to store/retrieve the statefile 
 
