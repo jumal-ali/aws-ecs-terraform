@@ -33,6 +33,18 @@ variable "public_subnets" {
   description = "List of Public Subnets e.g. [\"10.0.101.0/24\", \"10.0.102.0/24\", \"10.0.103.0/24\"]"
 }
 
+variable "ssh-public-key" {
+  type        = string
+  description = "Your public SSH Key, required to access the new resources via Bastion"
+  sensitive   = true
+}
+
+variable "create-bastion" {
+  type        = bool
+  description = "Should a bastion be created? true or false"
+  default     = false
+}
+
 variable "containers" {
   type = list(object({
     image                = string

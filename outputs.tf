@@ -14,3 +14,7 @@ output "task-update-info" {
 output "ci-deployer-bot-name" {
   value = aws_iam_user.deployer.name
 }
+
+output "bastion-public-ip" {
+  value = var.create-bastion ? aws_instance.bastion[0].public_ip : "Bastion Not Created"
+}
