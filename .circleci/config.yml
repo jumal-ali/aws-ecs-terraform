@@ -25,7 +25,7 @@ commands:
           name: Install Terraform
           command: |
             git clone https://github.com/tfutils/tfenv.git ~/.tfenv
-            echo 'export PATH="$HOME/.tfenv/bin:$PATH"' >> ~/.bash_profile
+            echo'export PATH="$HOME/.tfenv/bin:$PATH"' >> ~/.bash_profile
             mkdir -p ~/.local/bin/
             . ~/.profile
             ln -s ~/.tfenv/bin/* ~/.local/bin
@@ -57,7 +57,7 @@ jobs:
           name: prepare deploy
           command: |
             cat environments/dev.tfvars > terraform.tfvars
-            echo "ssh-public-key=$DEVOPS_PUBLIC_SSH_KEY" >> terraform.tfvars
+            echo "ssh-public-key = \"$DEVOPS_PUBLIC_SSH_KEY\"" >> terraform.tfvars
             terraform init
             terraform plan \
               -input=false \
