@@ -17,7 +17,9 @@ Build an ECS Cluster with a set of running ECS Services
 
 ## Install terraform
 
-Install Terraform Version Manager tfenv: https://github.com/tfutils/tfenv
+Install *tfenv*: https://github.com/tfutils/tfenv (a version management tool for Terraform)
+
+Then run the following commands
 
 ```sh
 cd /repo/path
