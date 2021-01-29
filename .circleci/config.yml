@@ -25,7 +25,7 @@ commands:
           name: Install Terraform
           command: |
             git clone https://github.com/tfutils/tfenv.git ~/.tfenv
-            echo'export PATH="$HOME/.tfenv/bin:$PATH"' >> ~/.bash_profile
+            echo 'export PATH="$HOME/.tfenv/bin:$PATH"' >> ~/.bash_profile
             mkdir -p ~/.local/bin/
             . ~/.profile
             ln -s ~/.tfenv/bin/* ~/.local/bin
