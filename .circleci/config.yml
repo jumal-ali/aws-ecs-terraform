@@ -66,8 +66,7 @@ jobs:
             mkdir -p /tmp/artifacts/
             cp tfplan /tmp/artifacts/tfplan
       - store_artifacts:
-          path: /tmp/artifacts/tfplan
-          destination: review-plan
+          path: /tmp/artifacts/
       - persist_to_workspace:
           root: .
           paths:
