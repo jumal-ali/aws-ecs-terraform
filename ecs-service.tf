@@ -4,7 +4,7 @@ resource "aws_ecs_service" "ecs-service" {
   name            = "${lower(var.env)}-${each.value.app-name}-service"
   cluster         = aws_ecs_cluster.ecs.id
   task_definition = aws_ecs_task_definition.ecs-task[each.value.app-name].arn
-  desired_count   = 2
+  desired_count   = each.value.replicas
   launch_type     = "FARGATE"
   propagate_tags  = "SERVICE"
 

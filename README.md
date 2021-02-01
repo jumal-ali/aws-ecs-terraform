@@ -47,6 +47,7 @@ https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html
         tag                  = string
         container-port       = number
         host-port            = number
+        replicas             = number
         cpu                  = number
         memory               = number
         app-name             = string

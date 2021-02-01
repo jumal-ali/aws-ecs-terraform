@@ -15,6 +15,7 @@ containers = [
     tag                  = "latest"
     container-port       = 3000
     host-port            = 80
+    replicas             = 2
     cpu                  = 256
     memory               = 512
     app-name             = "web-app"
